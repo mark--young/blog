@@ -1,12 +1,18 @@
-##git使用ssh密钥进行push,pull,等操作  
+##github使用ssh密钥进行push,pull,等操作  
+
+本文介绍了使用ssh完成对github上仓库的git push，git pull等操作。
 
 git使用https协议，每次pull, push都要输入密码，相当的烦。
 使用git协议，然后使用ssh密钥。这样可以省去每次都输密码。
 
+-----
 
-大概需要三个步骤：
+需要三个步骤：
+
 一、本地生成密钥对；
+
 二、设置github上的公钥；
+
 三、修改git的remote url为git协议。
 
 
