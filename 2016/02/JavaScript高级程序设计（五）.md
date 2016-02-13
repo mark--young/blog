@@ -1,0 +1,360 @@
+本教程是JavaScript教程，结合一些程序例子，让你从基础入门到掌握JavaScript(简称JS)。学习本教程，你需要有HTML与CSS基础知识，并在第一课之后，动手实践，才能更好的掌握JavaScript。
+
+### Array类型（重点）
+
+创建数组的基本方式有两种。第一种是使用Array 构造函数，如下面的代码所示。
+    
+    var colors1 = new Array();
+    var colors2 = new Array(20);
+    var colors3 = new Array("red", "blue", "green");
+    var names = new Array("Greg");
+
+创建数组的第二种基本方式是使用数组字面量表示法。数组字面量由一对包含数组项的方括号表示，多个数组项之间以逗号隔开，如下所示：
+
+    var colors = ["red", "blue", "green"]; // 创建一个包含3 个字符串的数组
+    var names = []; // 创建一个空数组
+    var values = [1,2,]; // 不要这样！这样会创建一个包含2 或3 项的数组
+    var options = [,,,,,]; // 不要这样！这样会创建一个包含5 或6 项的数组
+    
+以上代码的第一行创建了一个包含3个字符串的数组。第二行使用一对空方括号创建了一个空数组。第三行展示了在数组字面量的最后一项添加逗号的结果：在IE 中，`values` 会成为一个包含3 个项且每项的值分别为`1`、`2` 和`undefined` 的数组；在其他浏览器中，`values` 会成为一个包含2 项且值分别为1 和2 的数组。原因是IE8 及之前版本中的ECMAScript 实现在数组字面量方面存在bug。由于这个bug导致的另一种情况如最后一行代码所示，该行代码可能会创建包含5 项的数组（在IE9+、Firefox、Opera、Safari 和Chrome 中），也可能会创建包含6 项的数组（在IE8 及更早版本中）。在像这种省略值的情况下，每一项都将获得`undefined` 值；这个结果与调用Array 构造函数时传递项数在逻辑上是相同的。但是由于IE 的实现与其他浏览器不一致，因此我们强烈建议不要使用这种语法。
+
+> 与对象一样，在使用数组字面量表示法时，也不会调用Array 构造函数（Firefox 3及更早版本除外）。
+
+**Array读取使用方法**
+
+在读取和设置数组的值时，要使用方括号并提供相应值的基于0 的数字索引，如下所示：
+
+    var colors = ["red", "blue", "green"]; // 定义一个字符串数组
+    alert(colors[0]); // 显示第一项
+    colors[2] = "black"; // 修改第三项
+    colors[3] = "brown"; // 新增第四项
+
+方括号中的索引表示要访问的值。如果索引小于数组中的项数，则返回对应项的值，就像这个例子中的`colors[0]`会显示"`red`"一样。设置数组的值也使用相同的语法，但会替换指定位置的值。如果设置某个值的索引超过了数组现有项数，如这个例子中的`colors[3]`所示，数组就会自动增加到该索引值加1 的长度（就这个例子而言，索引是3，因此数组长度就是4）。
+
+数组的项数保存在其`length` 属性中，这个属性始终会返回0 或更大的值，如下面这个例子所示：
+
+    var colors = ["red", "blue", "green"]; // 创建一个包含3 个字符串的数组
+    var names = []; // 创建一个空数组
+    alert(colors.length); //3
+    alert(names.length); //0
+
+**数组的length 属性很有特点——它不是只读的。因此，通过设置这个属性，可以从数组的末尾移除项或向数组中添加新项。请看下面的例子：**
+
+    var colors = ["red", "blue", "green"]; // 创建一个包含3 个字符串的数组
+    colors.length = 2;
+    alert(colors[2]); //undefined
+
+这个例子中的数组colors 一开始有3 个值。将其length 属性设置为2 会移除最后一项（位置为2 的那一项），结果再访问colors[2]就会显示undefined 了。如果将其length 属性设置为大于数组项数的值，则新增的每一项都会取得undefined 值，如下所示：
+
+    var colors = ["red", "blue", "green"]; // 创建一个包含3 个字符串的数组
+    colors.length = 4;
+    aler t(colors[3]); //undefined
+
+在此，虽然colors 数组包含3 个项，但把它的length 属性设置成了4。这个数组不存在位置3，所以访问这个位置的值就得到了特殊值undefined。
+
+利用length 属性也可以方便地在数组末尾添加新项，如下所示：
+
+    var colors = ["red", "blue", "green"]; // 创建一个包含3 个字符串的数组
+    colors[colors.length] = "black"; //（在位置3）添加一种颜色
+    colors[colors.length] = "brown"; //（在位置4）再添加一种颜色
+
+由于数组最后一项的索引始终是length-1，因此下一个新项的位置就是length。每当在数组末尾添加一项后，其length 属性都会自动更新以反应这一变化。换句话说，上面例子第二行中的colors[colors.length]为位置3 添加了一个值，最后一行的colors[colors.length]则为位置4添加了一个值。当把一个值放在超出当前数组大小的位置上时，数组就会重新计算其长度值，即长度值等于最后一项的索引加1，如下面的例子所示：
+    
+    var colors = ["red", "blue", "green"]; // 创建一个包含3 个字符串的数组
+    colors[99] = "black"; // （在位置99）添加一种颜色
+    alert(colors.length); // 100
+
+> 数组最多可以包含4294967295个项，这几乎已经能够满足任何编程需求了。如果想添加的项数超过这个上限值，就会发生异常。而创建一个初始大小与这个上限值接近的数组，则可能会导致运行时间超长的脚本错误。
+
+#### 检测数组
+
+自从ECMAScript 3 做出规定以后，就出现了确定某个对象是不是数组的经典问题。对于一个网页，或者一个全局作用域而言，使用`instanceof` 操作符就能得到满意的结果：
+
+    if (value instanceof Array){
+    //对数组执行某些操作
+    }
+
+为了解决网页中包含多个框架，存在两个以上不同的全局执行环境，从而存在两个以上不同版本的`Array` 构造函数的情况，ECMAScript 5 新增了`Array.isArray()`方法。这个方法的目的是最终确定某个值到底是不是数组，而不管它是在哪个全局执行环境中创建的。这个方法的用法如下：
+
+    if (Array.isArray(value)){
+    //对数组执行某些操作
+    }
+> 支持`Array.isArray()`方法的浏览器有IE9+、Firefox 4+、Safari 5+、Opera 10.5+和Chrome。
+
+####转换方法
+
+**所有对象都具有toLocaleString()、toString()和valueOf()方法。**
+
+其中，调用数组的`toString()`方法会返回由数组中每个值的字符串形式拼接而成的一个以逗号分隔的字符串。而调用`valueOf()`返回的还是数组。实际上，为了创建这个字符串会调用数组每一项的`toString()`方法。来看下面这个例子。
+
+    var colors = ["red", "blue", "green"]; // 创建一个包含3 个字符串的数组
+    alert(colors.toString()); // red,blue,green
+    alert(colors.valueOf()); // red,blue,green
+    alert(colors); // red,blue,green
+
+数组继承的`toLocaleString()`、`toString()`和`valueOf()`方法，在默认情况下都会以逗号分隔的字符串的形式返回数组项。而如果使用`join()`方法，则可以使用不同的分隔符来构建这个字符串。`join()`方法只接收一个参数，即用作分隔符的字符串，然后返回包含所有数组项的字符串。请看下面的例子：
+
+    var colors = ["red", "green", "blue"];
+    alert(colors.join(",")); //red,green,blue
+    alert(colors.join("||")); //red||green||blue
+
+> 如果数组中的某一项的值是`null` 或者`undefined`，那么该值在`join()`、`toLocaleString()`、`toString()`和`valueOf()`方法返回的结果中以空字符串表示。
+
+#### 栈方法 `push()`/`pop()`
+
+`push()`方法可以接收任意数量的参数，把它们逐个添加到数组末尾，并返回修改后数组的长度。而`pop()`方法则从数组末尾移除最后一项，减少数组的length 值，然后返回移除的项。请看下面的例子：
+
+    var colors = new Array(); // 创建一个数组
+    var count = colors.push("red", "green"); // 推入两项
+    alert(count); //2
+    count = colors.push("black"); // 推入另一项
+    alert(count); //3
+    var item = colors.pop(); // 取得最后一项
+    alert(item); //"black"
+    alert(colors.length); //2
+
+可以将栈方法与其他数组方法连用，像下面这个例子一样：
+
+    var colors = ["red", "blue"];
+    colors.push("brown"); // 添加另一项
+    colors[3] = "black"; // 添加一项
+    alert(colors.length); // 4
+    var item = colors.pop(); // 取得最后一项
+    aler t(item); //"black"
+
+####队列方法
+
+`shift()`实现从数组前端取得荐的方法，`shift()`能够移除数组中的第一个项并返回该项，同时将数组长度减1。结合使用`shift()`和`push()`方法，可以像使用队列一样使用数组。
+
+    var colors = new Array(); //创建一个数组
+    var count = colors.push("red", "green"); //推入两项
+    alert(count); //2
+    count = colors.push("black"); //推入另一项
+    alert(count); //3
+    var item = colors.shift(); //取得第一项
+    alert(item); //"red"
+    alert(colors.length); //2
+
+还有另一个方法`unshift()`，能在数组前端添加任意个项并返回新数组的长度。因此，同时使用`unshift()`和`pop()`方法，可以从相反的方向来模拟队列，即在数组的前端添加项，从数组末端移除项，如下面的例子所示。
+
+    var colors = new Array(); //创建一个数组
+    var count = colors.unshift("red", "green"); //推入两项
+    alert(count); //2
+    count = colors.unshift("black"); //推入另一项
+    alert(count); //3
+    var item = colors.pop(); //取得最后一项
+    alert(item); //"green"
+    alert(colors.length); //2
+
+> IE7 及更早版本对JavaScript 的实现中存在一个偏差，其`unshift()`方法总是返回`undefined` 而不是数组的新长度。IE8 在非兼容模式下会返回正确的长度值。
+
+#### 重排序方法
+
+数组中已经存在两个可以直接用来重排序的方法：`reverse()`和`sort()`。
+
+    var values = [1, 2, 3, 4, 5];
+    values.reverse();
+    alert(values); //5,4,3,2,1
+    values.sort();
+    alert(values);//1,2,3,4,5
+
+在默认情况下，`sort()`方法按升序排列数组项——即最小的值位于最前面，最大的值排在最后面。为了实现排序，`sort()`方法会调用每个数组项的`toString()`转型方法，然后比较得到的字符串，以确定如何排序。即使数组中的每一项都是数值，`sort()`方法比较的也是字符串，如下所示。
+
+    var values = [0, 1, 5, 10, 15];
+    values.sort();
+    alert(values); //0,1,10,15,5
+
+数值5 虽然小于10，但在进行字符串比较时，"10"则位于"5"的前面，于是数组的顺序就被修改了。sort()方法可以接收一个比较函数作为参数，以便我们指定哪个值位于哪个值的前面。
+
+    function compare(value1, value2) {
+        if (value1 < value2) {
+            return -1;
+        } else if (value1 > value2) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+这个比较函数可以适用于大多数数据类型，只要将其作为参数传递给sort()方法即可，如下面这个例子所示:
+
+    var values = [0, 1, 5, 10, 15];
+    values.sort(compare);
+    alert(values); //0,1,5,10,15
+
+同理，如果需要升序排列，改变函数的返回值即可：
+
+    function compare(value1, value2) {
+        if (value1 < value2) {
+            return 1;
+        } else if (value1 > value2) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }    
+    
+    var values = [0, 1, 5, 10, 15];
+    values.sort(compare);
+    alert(values); // 15,10,5,1,0
+
+> `reverse()`和`sort()`方法的返回值是经过排序之后的数组。
+
+对于数值类型或者其`valueOf()`方法会返回数值类型的对象类型，可以使用一个更简单的比较函数。这个函数只要用第二个值减第一个值即可。
+
+    function compare(value1, value2){
+        return value2 - value1;
+    }
+
+由于比较函数通过返回一个小于零、等于零或大于零的值来影响排序结果，因此减法操作就可以适当地处理所有这些情况。
+
+
+#### 操作方法
+
+1.`concat()`方法
+
+`concat()`方法可以基于当前数组中的所有项创建一个新数组。这个方法会先创建当前数组一个副本，然后将接收到的参数添加到这个副本的末尾，最后返回新构建的数组。如果传递给concat()方法的是一或多个数组，则该方法会将这些数组中的每一项都添加到结果数组中。如果传递的值不是数组，这些值就会被简单地添加到结果数组的末尾。下面来看一个例子：
+
+    var colors = ["red", "green", "blue"];
+    var colors2 = colors.concat("yellow", ["black", "brown"]);
+    alert(colors); //red,green,blue
+    alert(colors2); //red,green,blue,yellow,black,brown
+
+以上代码开始定义了一个包含3 个值的数组colors。然后，基于colors 调用了`concat()`方法，并传入字符串"yellow"和一个包含"black"和"brown"的数组。最终，结果数组`colors2` 中包含了"red"、"green"、"blue"、"yellow"、"black"和"brown"。至于原来的数组`colors`，其值仍然保持不变。
+
+2.`slice()`方法
+
+`slice()`能够基于当前数组中的一或多个项创建一个新数组。`slice()`方法可以
+接受一或两个参数，即要返回项的起始和结束位置。在只有一个参数的情况下，`slice()`方法返回从该参数指定位置开始到当前数组末尾的所有项。如果有两个参数，该方法返回起始和结束位置之间的项——但不包括结束位置的项。注意，`slice()`方法不会影响原始数组。请看下面的例子。
+    
+    var colors = ["red", "green", "blue", "yellow", "purple"];
+    var colors2 = colors.slice(1);
+    var colors3 = colors.slice(1,4);
+    alert(colors2); //green,blue,yellow,purple
+    alert(colors3); //green,blue,yellow
+
+在这个例子中，开始定义的数组colors 包含5 项。调用`slice()`并传入1 会得到一个包含4 项的新数组；因为是从位置1 开始复制，所以会包含"green"而不会包含"red"。这个新数组`colors2` 中包含的是"green"、"blue"、"yellow"和"purple"。接着，我们再次调用`slice()`并传入了1 和4，表示复制从位置1 开始，到位置3 结束。结果数组`colors3 `中包含了"green"、"blue"和"yellow"。
+
+
+> 如果`slice()`方法的参数中有一个负数，则用数组长度加上该数来确定相应的位
+置。例如，在一个包含5 项的数组上调用`slice(-2,-1)`与调用`slice(3,4)`得到的结果相同。如果结束位置小于起始位置，则返回空数组。
+
+
+下面我们来介绍`splice()`方法，这个方法恐怕要算是最强大的数组方法了，它有很多种用法。`splice()`的主要用途是向数组的中部插入项，但使用这种方法的方式则有如下3 种。
+
+* **删除**：可以删除任意数量的项，只需指定2 个参数：要删除的第一项的位置和要删除的项数。例如，`splice(0,2)`会删除数组中的前两项。
+
+        var color = ["red","pink","black"];
+        var color1 = color.splice(0,2); // color ["black"]
+        //color1 ["red","pink"]
+    
+
+* **插入**：可以向指定位置插入任意数量的项，只需提供3 个参数：起始位置、0（要删除的项数）和要插入的项。如果要插入多个项，可以再传入第四、第五，以至任意多个项。例如，`splice(2,0,"red","green")`会从当前数组的位置2 开始插入字符串"red"和"green"。
+
+        var color = ["white","yellow","black","blue"];
+        var color1 = color.splice(2,0,"red"); //color1 []
+        //color ["white", "yellow", "red", "black", "blue"]
+
+* **替换**：可以向指定位置插入任意数量的项，且同时删除任意数量的项，只需指定3 个参数：起始位置、要删除的项数和要插入的任意数量的项。插入的项数不必与删除的项数相等。例如，`splice (2,1,"red","green")`会删除当前数组位置2 的项，然后再从位置2 开始插入字符串"red"和"green"。
+
+        var color = ["white","yellow","black","blue"];
+        var color1 = color.splice (2,1,"pink","green"); //color1 ["yellow"]
+        //color ["white", "yellow", "pink", "green", "blue"]
+        var color2 = color.splice (2,1,"pink","green","red","orange","green");
+        //color ["white", "yellow", "pink", "green", "red", "orange", "green", "green", "blue"]
+
+#### 位置方法
+
+ECMAScript 5 为数组实例添加了两个位置方法：`indexOf()`和`lastIndexOf()`。这两个方法都接收两个参数：要查找的项和（可选的）表示查找起点位置的索引。其中，`indexOf()`方法从数组的开头（位置0）开始向后查找，`lastIndexOf()`方法则从数组的末尾开始向前查找。
+
+**两个方法都返回要查找的项在数组中的位置，或者在没找到的情况下返回`-1`。**
+
+    var numbers = [1,2,3,4,5,4,3,2,1];
+    alert(numbers.indexOf(4)); //3
+    alert(numbers.lastIndexOf(4)); //5
+    alert(numbers.indexOf(4, 4)); //5
+    alert(numbers.lastIndexOf(4, 4)); //3
+    var person = { name: "Nicholas" };
+    var people = [{ name: "Nicholas" }];
+    var morePeople = [person];
+    alert(people.indexOf(person)); //-1
+    alert(morePeople.indexOf(person)); //0
+
+使用`indexOf()`和`lastIndexOf()`方法查找特定项在数组中的位置非常简单，支持它们的浏览器包括IE9+、Firefox 2+、Safari 3+、Opera 9.5+和Chrome。
+
+#### 迭代方法
+ECMAScript 5 为数组定义了5 个迭代方法。每个方法都接收两个参数：要在每一项上运行的函数和（可选的）运行该函数的作用域对象——影响this 的值。传入这些方法中的函数会接收三个参数：**数组项的值**、**该项在数组中的位置**和**数组对象本身**。根据使用的方法不同，这个函数执行后的返回值可能会也可能不会影响方法的返回值。以下是这5 个迭代方法的作用。
+
+* `every()`：对数组中的每一项运行给定函数，如果该函数对每一项都返回`true`，则返回`true`。
+* `filter()`：对数组中的每一项运行给定函数，返回该函数会返回`true` 的项组成的数组。
+* `forEach()`：对数组中的每一项运行给定函数。这个方法没有返回值。
+* `map()`：对数组中的每一项运行给定函数，返回每次函数调用的结果组成的数组。
+* `some()`：对数组中的每一项运行给定函数，如果该函数对任一项返回`true`，则返回`true`。
+
+在这些方法中，最相似的是`every()`和`some()`，它们都用于查询数组中的项是否满足某个条件。对`every()`来说，传入的函数必须对每一项都返回`true`，这个方法才返回`true`；否则，它就返回`false`。而`some()`方法则是只要传入的函数对数组中的某一项返回`true`，就会返回`true`。请看以下例子:
+
+    var numbers = [1,2,3,4,5,4,3,2,1];
+
+    //every();
+    var everyResult = numbers.every(function(item, index, array){
+        return (item > 2);
+    });
+
+    alert(everyResult); //false
+
+    //// some();
+    var someResult = numbers.some(function(item, index, array){
+        return (item > 2);
+    });
+
+    alert(someResult); //true
+
+    // filter();
+    var filterResult = numbers.filter(function(item, index, array){
+    return (item > 2);
+    });
+
+    alert(filterResult); //[3,4,5,4,3]
+
+    // map();
+    var mapResult = numbers.map(function(item, index, array){
+    return item * 2;
+    });
+
+    alert(mapResult); //[2,4,6,8,10,8,6,4,2]
+
+    // forEach();
+    numbers.forEach(function(item, index, array){
+    //执行某些操作
+    // 相当于遍历了数组
+    });
+
+#### 归并方法
+
+ECMAScript 5 还新增了两个归并数组的方法：`reduce()`和`reduceRight()`。这两个方法都会迭代数组的所有项，然后构建一个最终返回的值。其中，`reduce()`方法从数组的第一项开始，逐个遍历到最后。而`reduceRight()`则从数组的最后一项开始，向前遍历到第一项。
+
+这两个方法都接收两个参数：一个在每一项上调用的函数和（可选的）作为归并基础的初始值。传给`reduce()`和`reduceRight()`的函数接收4 个参数：前一个值、当前值、项的索引和数组对象。这个函数返回的任何值都会作为第一个参数自动传给下一项。第一次迭代发生在数组的第二项上，因此第一个参数是数组的第一项，第二个参数就是数组的第二项。
+
+使用`reduce()`方法可以执行求数组中所有值之和的操作，比如：
+
+    var values = [1,2,3,4,5];
+    var sum = values.reduce(function(prev, cur, index, array){
+        return prev + cur;
+    });
+    alert(sum); //15
+
+第一次执行回调函数，`prev` 是1，cur 是2。第二次，`prev` 是3（1 加2 的结果），cur 是3（数组的第三项）。这个过程会持续到把数组中的每一项都访问一遍，最后返回结果。
+
+`reduceRight()`的作用类似，只不过方向相反而已。来看下面这个例子。
+
+    var values = [1,2,3,4,5];
+    var sum = values.reduceRight(function(prev, cur, index, array){
+        return prev + cur;
+    });
+    alert(sum); //15
+
+在这个例子中，第一次执行回调函数，`prev` 是5，cur 是4。当然，最终结果相同，因为执行的都是简单相加的操作。
+
+使用`reduce()`还是`reduceRight()`，主要取决于要从哪头开始遍历数组。除此之外，它们完全相同。
+
+支持这两个归并函数的浏览器有IE9+、Firefox 3+、Safari 4+、Opera 10.5 和Chrome。
