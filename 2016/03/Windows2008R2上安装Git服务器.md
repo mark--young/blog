@@ -23,4 +23,42 @@
 
 ###Windows2008上的配置
 
-1.安装CopSSH
+####1.安装CopSSH
+注意：**建议使用默认的安装方式安装，修改一下安装目录为c:\ICWa或者C：\SSH之类的，简单的。**
+
+问题1：安装CopSSH无法使用密钥，出现：public key permission denied错误。
+
+建议，重新安装CopSSH，卸载之后，把之前设置的用户在“控制面板”中删除，删除安装目录。
+
+问题2：无法连接SSH服务器，telnet失败。无法启动CopSSH服务。
+
+建议：安装的时候，不要设置CopSSH的密码与用户。密码的强度在win2008R2下是有要求的。可以看看控制面板中是否已经建立了SSH账户。如果不行，请参考1的方法，删除用户，卸载，删除文件，重装，使用默认的方式。
+
+
+####2.安装Git
+
+请使用默认的选项进行安装。
+
+####3.设置环境变量
+
+	HOME
+	C:\ICW
+	
+	GIT_HOME
+	C:\git
+	
+	Path:
+	%GIT_HOME%\bin;%GIT_HOME%\mingw64\libexec\git-core
+
+
+####4.生成密钥
+
+请参考博文：
+[git使用ssh密钥进行push&pull等操作](http://wayearn.com/2016/01/gitssh/)
+
+
+####5.初始化仓库
+请参考博文：
+[Git入门教程](http://wayearn.com/2016/03/git%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/)
+
+
